@@ -10,8 +10,9 @@ def user_input():
     print("What would you like to do?")
     print( "1) view current balance \n2) record a debit (withdraw) '\n3) record a credit (deposit)\n4) exit")
     userinput = input("Your choice? ")
-    while int(userinput) >= 5 or int(userinput) <= 0:
-        print("Invalid Choice")
+    while (userinput.isdigit() == False) or (int(userinput) >=5 or int(userinput) < 1):
+        print("\nInvalid Choice\n")
+        print( "1) view current balance \n2) record a debit (withdraw) '\n3) record a credit (deposit)\n4) exit")
         userinput = input("\nYour choice? ")
     return userinput 
 
@@ -43,7 +44,8 @@ while userinput != '4':
         debit_amount_input = input("Enter the debit amount: ")
         debit_amount = float(debit_amount_input)
         debit(debit_amount)
-        print(f"\n Debit amount: ${debit_amount}. Your account balance is: ${entry[2]}\n")
+        balance = float(entry[2])
+        print(f"\n Debit amount: ${debit_amount}. Your account balance is: ${'%.2f'%balance}\n")
 
 
     def credit(amount):
@@ -62,7 +64,8 @@ while userinput != '4':
         credit_amount_input = input("Enter the credit amount: ")
         credit_amount = float(credit_amount_input)
         credit(credit_amount)
-        print(f"\n Credit amount: ${credit_amount}. Your account balance is: ${entry[2]}\n")
+        balance = float(entry[2])
+        print(f"\n Credit amount: ${credit_amount}. Your account balance is: ${'%.2f'%balance}\n")
 
 
     def view_balance():
