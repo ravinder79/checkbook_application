@@ -45,11 +45,6 @@ while userinput != '5':
         balance = 0.00
         for i in range(0, len(trans_amounts)):
             balance = balance + float(trans_amounts[i])
-        # with open("checkbook_v3.csv", "r") as f:
-        #     contents = (f.readlines())
-        #     for line in contents:
-        #         balance = balance + float(line)
-        # new_balance = balance + (amount * -1)
         if balance < 0:
             print(f"\nYou do not have enough balance to withdraw ${'%.2f'%amount}")
             print(f"\nYour current balance is ${'%.2f'%balance}")
@@ -64,9 +59,6 @@ while userinput != '5':
                 for debit_element in debit_elements:
                     f.write(str(debit_element) + '\t')
 
-            # with open("checkbook_v3.csv", 'a') as f:
-            #     f.write("\n")
-            #     f.write(amount)
 
 # This block accepts a valid user debit amount and appends debit amount in the checkbook.csv file.
     if userinput == '2':
@@ -93,10 +85,6 @@ while userinput != '5':
             balance = 0.00
             for amount in range(0, len(trans_amounts)):
                 balance = balance + float(trans_amounts[amount])
-                # with open("checkbook_v3.csv", "r") as f:
-                #     contents = (f.readlines())
-                #     for line in contents:
-                #         balance = balance + float(line)
             print(f"\n Debit amount: ${debit_amount}. Your account balance is: ${'%.2f'%balance}\n")
 
 # this functions actually credits the amount to user's account. The credit amount is appended in the checbook.csv file.
@@ -118,13 +106,6 @@ while userinput != '5':
         credit_description = input("Enter a description of this credit: ")
         credit_amount = float(credit_amount_input)
         credit(credit_amount, credit_description)
-        trans_types=[]
-        trans_amounts=[]
-        trans_notes = []
-        trans_time =[]
-        # with open('checkbook_v3.csv','r') as f:
-        #     reader = csv.reader(f, delimiter='\t')
-        #     for ttype, amount, note, time in reader:
         trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
@@ -132,24 +113,19 @@ while userinput != '5':
         balance = 0.00
         for amount in range(0, len(trans_amounts)):
             balance = balance + float(trans_amounts[amount])
-        
-        
-
-        # balance = 0.00
-        # with open("checkbook_v3.csv", "r") as f:
-        #     contents = (f.readlines())
-        #     for line in contents:
-        #         balance = balance + float(line)
         print(f"\n Credit amount: ${credit_amount}. Your account balance is: ${'%.2f'%balance}\n")
 
 # This function calculates and displays the user balance.
     def view_balance():
+        
+        trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
+        trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
+        trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
+        trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         balance = 0.00
-        with open("checkbook_v3.csv", "r") as f:
-            contents = (f.readlines())
-            for line in contents:
-                balance = balance + float(line)
-            print(f"\nYour account balance is: ${'%.2f'%balance}\n")
+        for amount in range(0, len(trans_amounts)):
+            balance = balance + float(trans_amounts[amount])
+        print(f"\nYour account balance is: ${'%.2f'%balance}\n")
 
 
     if userinput == '1':
@@ -181,29 +157,27 @@ while userinput != '5':
             
             if userinput1 == '2':
                 print("\n Your debit transactions: \n")
-                with open("checkbook_v3.csv", "r") as f:
-                    contents = (f.readlines())
-                i = contents[0]
-                y = [i.replace("\n", '').replace(' ', '').split() for i in contents]
-                y = sum(y, [])
-                debit_amounts = [float(i) for i in y if float(i) < 0.00]
-                for e in debit_amounts:
-                    print(e)
-                debit_amount = sum([float(i) for i in y if float(i) < 0.00])
-                print(f"\nTotal debit amount = ${'%.2f'%debit_amount}\n")
+                trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                t_debit_amount = 0.00
+                for i in range(0, len(trans_amounts)):
+                    t_debit_amount = t_debit_amount + float(trans_amounts[i])
+                    print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
+                print(f"\nTotal debit amount = ${'%.2f'%t_debit_amount}\n")
             
             if userinput1 == '3':
                 print("\n Your credit transactions: \n")
-                with open("checkbook_v3.csv", "r") as f:
-                    contents = (f.readlines())
-                i = contents[0]
-                y = [i.replace("\n", '').replace(' ', '').split() for i in contents]
-                y = sum(y, [])
-                credit_amounts = [float(i) for i in y if float(i) > 0.00]
-                for e in credit_amounts:
-                    print(e)
-                credit_amount = sum([float(i) for i in y if float(i) > 0.00])
-                print(f"\nTotal credit amount = ${'%.2f'%credit_amount}\n")
+                trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                t_credit_amount = 0.00
+                for i in range(0, len(trans_amounts)):
+                    t_credit_amount = t_credit_amount + float(trans_amounts[i])
+                    print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
+                print(f"\nTotal credit amount = ${'%.2f'%t_credit_amount}\n")
 
             user_input1()
 
