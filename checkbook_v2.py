@@ -66,7 +66,7 @@ while userinput != '5':
                     f.write(str(debit_element) + '\t')
 
 
-# This block accepts a valid user debit amount and appends debit amount in the checkbook.csv file.
+    # This block accepts a valid user debit amount, calls 'debit' function and displays debit amount and total balance: .
     if userinput == '2':
         debit_amount_input = input("Enter the debit amount: ")
         while is_number(debit_amount_input) == 0:
@@ -92,7 +92,7 @@ while userinput != '5':
                 balance = balance + float(trans_amounts[amount])
             print(f"\n Debit amount: ${debit_amount}. Your account balance is: ${'%.2f'%balance}\n")
 
-# this functions actually credits the amount to user's account. The credit amount is appended in the checbook.csv file.
+    # this functions actually credits the amount to user's account. The credit amount is appended in the checbook.csv file.
     def credit(amount, credit_description):
         amount = str(amount)
         credit_elements = ['credit', amount, credit_description, t ]
@@ -102,7 +102,7 @@ while userinput != '5':
             for credit_element in credit_elements:
                 f.write(str(credit_element) + '\t')
 
-
+    # code used when credit option is selected on main menu. # This block accepts a valid user credit amount, calls 'credit' function and displays credit amount and total balance: 
     if userinput == '3':
         credit_amount_input = input("Enter the credit amount: ")
         while is_number(credit_amount_input) == 0:
@@ -124,7 +124,8 @@ while userinput != '5':
             balance = balance + float(trans_amounts[amount])
         print(f"\n Credit amount: ${credit_amount}. Your account balance is: ${'%.2f'%balance}\n")
 
-# This function calculates and displays the user balance.
+
+    # This function calculates and displays the user balance when called.
     def view_balance():
         trans_types=[]
         trans_amounts=[]
@@ -145,7 +146,7 @@ while userinput != '5':
 
 
 
-# user_input1 is a 'sub-menu' which allows user to view transactions by category.
+# user_input1 is a  function will displays 'sub-menu' which allows user to view transactions by category.
     def user_input1():
         global userinput1
         print("\nWhat would you like to do?")
@@ -158,15 +159,19 @@ while userinput != '5':
         return userinput1
 
 # the block below is code which allows user to review different tranactions by category.
+    #code to display sub-menu:
     if userinput == '4':
         user_input1()
         while userinput1 != '4':
+
+            #code to display ALL transactions:
             if userinput1 == '1':
                 with open("checkbook_v3.csv", "r") as f:
                     contents = (f.readlines())
                     for line in contents:
                         print(line)
             
+            #code to display sub-menu DEBIT transactions only:
             if userinput1 == '2':
                 trans_types=[]
                 trans_amounts=[]
@@ -183,6 +188,7 @@ while userinput != '5':
                     print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
                 print(f"\nTotal debit amount = ${'%.2f'%t_debit_amount}\n")
             
+            #code to display sub-menu CREDIT transactions only:
             if userinput1 == '3':
                 print("\n Your credit transactions: \n")
                 trans_types=[]
@@ -199,15 +205,17 @@ while userinput != '5':
                     print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
                 print(f"\nTotal credit amount = ${'%.2f'%t_credit_amount}\n")
 
-            user_input1()
-
+            user_input1() 
+        
+        
+        #code to return from sub-menu to main-menu:
         if userinput1 == 4:
             user_input()
     
 # the user_input function below will return use to main menu options
     user_input()
 
-# exit menu option
+# exit main menu option
     if userinput == '5':
         print(" Have a nice day!")
 
