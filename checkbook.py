@@ -335,7 +335,7 @@ while userinput != '5':
     user_input()
 
 # exit main menu option
-    if userinput == '5':
-        print(" Have a nice day!")
+if userinput == '5':
+    print(" Have a nice day!")
 
 
