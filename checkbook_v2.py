@@ -28,32 +28,38 @@ def user_input():
 
 
 user_input()
-
-
 t = datetime.datetime.now()
 
 
 while userinput != '5':
 
-# this functions actually debits the amount from user's account. If debit transaction is higher than balance, it prevents the debit. 
+    # this functions actually debits the amount from user's account. If debit transaction is higher than balance, it prevents the debit. 
     def debit(amount, debit_description):
-        
+        trans_types=[]
+        trans_amounts=[]
+        trans_notes = []
+        trans_time =[]
+        balance = 0.00
         trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
-        balance = 0.00
+        acc_balance = 0.00
         for i in range(0, len(trans_amounts)):
+            acc_balance = acc_balance + float(trans_amounts[i])
             balance = balance + float(trans_amounts[i])
-        if balance < 0:
+        acc_balance = acc_balance - amount
+        if acc_balance < 0:
             print(f"\nYou do not have enough balance to withdraw ${'%.2f'%amount}")
             print(f"\nYour current balance is ${'%.2f'%balance}")
             return 'insufficent amount'
         else:
-            amount = float(amount)
-            amount = amount * -1
+            amount = float(amount)* -1
+            print(amount)
+            print("I was here")
             amount = str(amount)
             debit_elements = ['debit', amount, debit_description, t ]
+            print("I was here too!")
             with open("checkbook_v3.csv", 'a') as f:
                 f.write("\n")
                 for debit_element in debit_elements:
@@ -68,13 +74,12 @@ while userinput != '5':
             debit_amount_input = input("\nEnter the debit amount: ")
         debit_description = input("Enter a description of this debit: ")
         debit_amount = float(debit_amount_input)
-        print(debit_amount)
-        debit(debit_amount, debit_description)
+        output = debit(debit_amount, debit_description)
         trans_types=[]
         trans_amounts=[]
         trans_notes = []
         trans_time =[]
-        if debit(debit_amount, debit_description) == 'insufficent amount':
+        if output == 'insufficent amount':
             print("\n")
         else:
             balance = 0.00
@@ -106,6 +111,10 @@ while userinput != '5':
         credit_description = input("Enter a description of this credit: ")
         credit_amount = float(credit_amount_input)
         credit(credit_amount, credit_description)
+        trans_types=[]
+        trans_amounts=[]
+        trans_notes = []
+        trans_time =[]
         trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
@@ -117,7 +126,10 @@ while userinput != '5':
 
 # This function calculates and displays the user balance.
     def view_balance():
-        
+        trans_types=[]
+        trans_amounts=[]
+        trans_notes = []
+        trans_time =[]
         trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
         trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t')]
@@ -156,6 +168,10 @@ while userinput != '5':
                         print(line)
             
             if userinput1 == '2':
+                trans_types=[]
+                trans_amounts=[]
+                trans_notes = []
+                trans_time =[]
                 print("\n Your debit transactions: \n")
                 trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
                 trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
@@ -169,6 +185,10 @@ while userinput != '5':
             
             if userinput1 == '3':
                 print("\n Your credit transactions: \n")
+                trans_types=[]
+                trans_amounts=[]
+                trans_notes = []
+                trans_time =[]
                 trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
                 trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
                 trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
