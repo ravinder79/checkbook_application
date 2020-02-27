@@ -1,6 +1,7 @@
 
 import datetime
 import csv
+from dateutil.parser import parse
 print("~~~ Welcome to your terminal checkbook! ~~~")
 
 
@@ -13,10 +14,19 @@ def is_number(string):
         except ValueError:
             return 0
 
+def validate(date_text):
+    while True:
+        try:
+            input = datetime.datetime.strptime(date_text, '%Y-%m-%d')
+            return 1
+        except ValueError:
+            return 0
+
 
 # This function displays main menu and asks for a valid user menu input
 def user_input():
     global userinput
+    print("\n--- MAIN MENU ---")
     print("What would you like to do?")
     print( "1) view current balance \n2) record a debit (withdraw) \n3) record a credit (deposit)\n4) view all historical transactions\n5) exit")
     userinput = input("Your choice? ")
@@ -150,15 +160,15 @@ while userinput != '5':
     def user_input1():
         global userinput1
         print("\nWhat would you like to do?")
-        print( "1) view all transctions \n2) view debit tranactions \n3) view credit tranactions \n4) Go to main menu\n")
+        print( "1) view all transactions \n2) view debit transactions \n3) view credit transactions \n4) Go to main menu\n")
         userinput1 = input("Your choice? ")
         while (userinput1.isdigit() == False) or (int(userinput1) >5 or int(userinput1) < 1):
             print("\nInvalid Choice\n")
-            print( "1) view all transctions \n2) view debit tranactions \n3) view credit tranactions \n4) Go to main menu\n")
+            print( "1) view all transactions \n2) view debit transactions \n3) view credit transactions \n4) Go to main menu\n")
             userinput1 = input("\nYour choice? ")
         return userinput1
 
-# the block below is code which allows user to review different tranactions by category.
+# the block below is code which allows user to review different transactions by category.
     #code to display sub-menu:
     if userinput == '4':
         user_input1()
@@ -166,45 +176,153 @@ while userinput != '5':
 
             #code to display ALL transactions:
             if userinput1 == '1':
-                with open("checkbook_v3.csv", "r") as f:
-                    contents = (f.readlines())
-                    for line in contents:
-                        print(line)
-            
+                global userinput2
+                print("\nWhat would you like to do?")
+                print("1) view all transactions \n2) view all transactions by date")
+                userinput2 = input("Your choice? ")
+                while (userinput2.isdigit() == False) or (int(userinput2) >2 or int(userinput2) < 1):
+                    print("\nInvalid Choice\n")
+                    print("1) view all transactions \n2) view all transactions by date")
+                    userinput2 = input("\nYour choice? ")
+
+                if userinput2 == '1':
+                    with open("checkbook_v3.csv", "r") as f:
+                        print("type   amount  trans_note  trans_date-time")
+                        contents = (f.readlines())
+                        for line in contents:
+                            print(line)
+                #code to display transactions by date:
+                if userinput2 == '2':
+                    date_input = input("Please enter a date in YYYY-MM-DD format: ")
+                    validate(date_input)
+                    while validate(date_input) == 0:
+                        print("Invalid input!")
+                        date_input = input("Please enter a date in YYYY-MM-DD format: ")
+                    trans_types=[]
+                    trans_amounts=[]
+                    trans_notes = []
+                    trans_time =[]
+                    print(f"\n Your transactions on date {date_input}: \n")
+                    trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[3].split(' ')[0] == date_input]
+                    trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[3].split(' ')[0] == date_input]
+                    trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[3].split(' ')[0] == date_input]
+                    trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[3].split(' ')[0] == date_input]
+                    if len(trans_types) == 0:
+                        print(f" --- No transactions found for {date_input} ---")
+                    else:
+                        t_debit_amount = 0.00
+                        print("type   amount  trans_note")
+                        for i in range(0, len(trans_amounts)):
+                            t_debit_amount = t_debit_amount + float(trans_amounts[i])
+                            print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]} ")
+                    
+
+
             #code to display sub-menu DEBIT transactions only:
             if userinput1 == '2':
-                trans_types=[]
-                trans_amounts=[]
-                trans_notes = []
-                trans_time =[]
-                print("\n Your debit transactions: \n")
-                trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
-                trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
-                trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
-                trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
-                t_debit_amount = 0.00
-                for i in range(0, len(trans_amounts)):
-                    t_debit_amount = t_debit_amount + float(trans_amounts[i])
-                    print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
-                print(f"\nTotal debit amount = ${'%.2f'%t_debit_amount}\n")
+                global userinput3
+                print("\nWhat would you like to do?")
+                print("1) view all debit transactions \n2) view all debit transactions by date")
+                userinput3 = input("Your choice? ")
+                while (userinput3.isdigit() == False) or (int(userinput3) >2 or int(userinput3) < 1):
+                    print("\nInvalid Choice\n")
+                    print("1) view all debit transactions \n2) view all debit transactions by date")
+                    userinput3 = input("\nYour choice? ")
+
+                if userinput3 == '1':
+                    trans_types=[]
+                    trans_amounts=[]
+                    trans_notes = []
+                    trans_time =[]
+                    print("\n Your debit transactions: \n")
+                    trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                    trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                    trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                    trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'debit']
+                    t_debit_amount = 0.00
+                    print("type   amount  trans_note  trans_date-time")
+                    for i in range(0, len(trans_amounts)):
+                        t_debit_amount = t_debit_amount + float(trans_amounts[i])
+                        print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
+                    print(f"\nTotal debit amount = ${'%.2f'%t_debit_amount}\n")
+                #code to display debit transactions by date:
+                if userinput3 == '2':
+                    date_input = input("Please enter a date in YYYY-MM-DD format: ")
+                    validate(date_input)
+                    while validate(date_input) == 0:
+                        print("Invalid input!")
+                        date_input = input("Please enter a date in YYYY-MM-DD format: ")
+                    trans_types=[]
+                    trans_amounts=[]
+                    trans_notes = []
+                    trans_time =[]
+                    print(f"\n Your transactions on date {date_input}: \n")
+                    trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'debit')]
+                    trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'debit')]
+                    trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'debit')]
+                    trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'debit')]
+                    t_debit_amount = 0.00
+                    if len(trans_amounts) == 0:
+                        print(f"--- No transactions found for {date_input} ----")
+                    else:
+                        print("type   amount  trans_note")
+                        for i in range(0, len(trans_amounts)):
+                            t_debit_amount = t_debit_amount + float(trans_amounts[i])
+                            print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]} ")
+    
             
             #code to display sub-menu CREDIT transactions only:
             if userinput1 == '3':
-                print("\n Your credit transactions: \n")
-                trans_types=[]
-                trans_amounts=[]
-                trans_notes = []
-                trans_time =[]
-                trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
-                trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
-                trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
-                trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
-                t_credit_amount = 0.00
-                for i in range(0, len(trans_amounts)):
-                    t_credit_amount = t_credit_amount + float(trans_amounts[i])
-                    print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
-                print(f"\nTotal credit amount = ${'%.2f'%t_credit_amount}\n")
+                global userinput4
+                print("\nWhat would you like to do?")
+                print("1) view all credit transactions \n2) view all credit transactions by date")
+                userinput4 = input("Your choice? ")
+                while (userinput4.isdigit() == False) or (int(userinput4) >2 or int(userinput4) < 1):
+                    print("\nInvalid Choice\n")
+                    print("1) view all credit transactions \n2) view all credit transactions by date")
+                    userinput4 = input("\nYour choice? ")
 
+                if userinput4 == '1':
+            
+                    print("\n Your credit transactions: \n")
+                    trans_types=[]
+                    trans_amounts=[]
+                    trans_notes = []
+                    trans_time =[]
+                    trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                    trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                    trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                    trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if x[0] == 'credit']
+                    t_credit_amount = 0.00
+                    print("type   amount  trans_note  trans_date-time")
+                    for i in range(0, len(trans_amounts)):
+                        t_credit_amount = t_credit_amount + float(trans_amounts[i])
+                        print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]}, {trans_time[i]}")
+                    print(f"\nTotal credit amount = ${'%.2f'%t_credit_amount}\n")
+            #code to display debit transactions by date:
+                if userinput4 == '2':
+                    date_input = input("Please enter a date in YYYY-MM-DD format: ")
+                    validate(date_input)
+                    while validate(date_input) == 0:
+                        print("Invalid input!")
+                        date_input = input("Please enter a date in YYYY-MM-DD format: ")
+                    trans_types=[]
+                    trans_amounts=[]
+                    trans_notes = []
+                    trans_time =[]
+                    print(f"\n Your transactions on date {date_input}: \n")
+                    trans_types = [x[0] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'credit')]
+                    trans_amounts = [x[1] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'credit')]
+                    trans_notes = [x[2] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'credit')]
+                    trans_time = [x[3] for x in csv.reader(open('checkbook_v3.csv','r'), delimiter='\t') if (x[3].split(' ')[0] == date_input and x[0] == 'credit')]
+                    t_credit_amount = 0.00
+                    if len(trans_amounts) == 0:
+                        print(f"--- No transactions found for {date_input} ----")
+                    else:
+                        print("type   amount  trans_note")
+                        for i in range(0, len(trans_amounts)):
+                            t_credit_amount = t_credit_amount + float(trans_amounts[i])
+                            print(f"{trans_types[i]}, {trans_amounts[i]}, {trans_notes[i]} ")
             user_input1() 
         
         
