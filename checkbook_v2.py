@@ -14,6 +14,7 @@ def is_number(string):
         except ValueError:
             return 0
 
+# This function is used to validate that date entered by user is valid
 def validate(date_text):
     while True:
         try:
